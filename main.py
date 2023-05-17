@@ -22,7 +22,9 @@ def parse_book_page(book_id):
     image_url = urljoin(url, image)
     comm = soup.find_all(class_='texts')
     comm = [comment.find('span').text for comment in comm]
-    return title.strip(), author.strip(), image_url, comm
+    genres = soup.find('span', class_='d_book').find_all('a')
+    book_genre = [genre.text for genre in genres]
+    return title.strip(), author.strip(), image_url, comm, book_genre
 
 def download_book(book_id, title):
     url = f'https://tululu.org/txt.php?id={book_id}'
@@ -47,10 +49,10 @@ def download_books():
     nums = list(range(1,11))
     for num in nums:
         try:
-            title, author, image_url, comm = parse_book_page(num)
+            title, author, image_url, comm, book_gener = parse_book_page(num)
             download_image(image_url, num)
             download_book(num, title)
-            print(title, comm)
+            print(title, book_gener)
         except requests.HTTPError:
             print('произошло перенаправление')
 download_books()
