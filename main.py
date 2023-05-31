@@ -1,9 +1,17 @@
 import requests
 import os
+import argparse
 
 from pathvalidate import sanitize_filename
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
+
+def createParser():
+    parser = argparse.ArgumentParser(description='Описание что делает программа')
+    parser.add_argument('start_id', help='начало диапазона', type=int)
+    parser.add_argument('end_id', help='конец диапазона', type=int)
+    args = parser.parse_args()
+    return args.start_id, args.end_id
 
 
 def check_for_redirect(response):
@@ -46,13 +54,18 @@ def download_image(image_url, book_id):
 
 def download_books():
     os.makedirs('books', exist_ok=True)
-    nums = list(range(1,11))
+    start_id, end_id = createParser()
+    nums = list(range(start_id, end_id))
     for num in nums:
         try:
             title, author, image_url, comm, book_gener = parse_book_page(num)
             download_image(image_url, num)
             download_book(num, title)
-            print(title, book_gener)
+            print(title, author)
+
         except requests.HTTPError:
             print('произошло перенаправление')
+
+
+
 download_books()
