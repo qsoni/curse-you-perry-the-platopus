@@ -44,6 +44,7 @@ def download_book(book_id, title):
         file.write(response.content)
 
 def download_image(image_url, book_id):
+    os.makedirs('images', exist_ok=True)
     url = image_url
     response = requests.get(url)
     response.raise_for_status()
